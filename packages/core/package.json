@@ -1,0 +1,17 @@
+{
+  "name": "@seotda/core",
+  "version": "0.1.0",
+  "description": "섯다 게임 규칙 엔진 (프레임워크 독립적, 순수 TypeScript)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}

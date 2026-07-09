@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap");
+
+:root {
+  /* 색상 토큰 */
+  --color-bg-deep: #14182a;
+  --color-bg-felt: #1c2333;
+  --color-felt-edge: #262f47;
+  --color-crimson: #b33a3a;
+  --color-crimson-bright: #d4574f;
+  --color-gold: #c9a15a;
+  --color-gold-bright: #e0c07f;
+  --color-cream: #f0e6d2;
+  --color-ink: #14100a;
+  --color-text-primary: #f0e6d2;
+  --color-text-muted: #9aa1b8;
+
+  /* 타이포 토큰 */
+  --font-display: "Noto Serif KR", serif;
+  --font-body: "Noto Sans KR", sans-serif;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: radial-gradient(ellipse at top, var(--color-bg-felt) 0%, var(--color-bg-deep) 70%);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold-bright);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

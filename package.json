@@ -1,0 +1,13 @@
+{
+  "name": "seotda-game",
+  "private": true,
+  "version": "0.1.0",
+  "description": "표준 섯다(20장) 카드게임 - 규칙 엔진 + 웹 UI",
+  "scripts": {
+    "test": "pnpm --filter @seotda/core test",
+    "test:watch": "pnpm --filter @seotda/core test:watch",
+    "dev:ui": "pnpm --filter @seotda/ui dev",
+    "build:core": "pnpm --filter @seotda/core build"
+  },
+  "packageManager": "pnpm@11.10.0"
+}

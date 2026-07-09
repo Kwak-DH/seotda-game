@@ -1,0 +1,87 @@
+.hwatu-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: linear-gradient(160deg, #f4ecd8 0%, #ece0c4 100%);
+  border: 1px solid rgba(28, 22, 12, 0.35);
+  box-shadow:
+    0 2px 0 rgba(28, 22, 12, 0.25),
+    0 6px 14px rgba(0, 0, 0, 0.35);
+  color: #2a1f12;
+  font-family: var(--font-display);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.hwatu-card--sm {
+  width: 44px;
+  height: 66px;
+}
+.hwatu-card--md {
+  width: 64px;
+  height: 96px;
+}
+.hwatu-card--lg {
+  width: 84px;
+  height: 126px;
+}
+
+.hwatu-card__month {
+  font-size: 1.6em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.hwatu-card--sm .hwatu-card__month {
+  font-size: 1.2em;
+}
+
+.hwatu-card__label {
+  font-size: 0.6em;
+  margin-top: 4px;
+  color: #5a4a30;
+  letter-spacing: 0.02em;
+  text-align: center;
+  padding: 0 4px;
+}
+
+.hwatu-card--sm .hwatu-card__label {
+  display: none;
+}
+
+.hwatu-card--gwang {
+  background: linear-gradient(160deg, #fdf3d8 0%, #f3dfa0 100%);
+  border-color: #b8862f;
+}
+
+.hwatu-card__gwang-mark {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 0.75em;
+  font-weight: 700;
+  color: var(--color-crimson);
+}
+
+.hwatu-card--back {
+  background: linear-gradient(160deg, #1c2333 0%, #2a3350 100%);
+  border: 1px solid rgba(201, 161, 90, 0.4);
+}
+
+.hwatu-card__back-pattern {
+  width: 60%;
+  height: 60%;
+  border: 2px solid rgba(201, 161, 90, 0.55);
+  border-radius: 4px;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(201, 161, 90, 0.12) 0px,
+      rgba(201, 161, 90, 0.12) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+}

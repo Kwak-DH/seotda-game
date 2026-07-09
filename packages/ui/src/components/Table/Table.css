@@ -124,6 +124,21 @@
   margin-top: 24px;
 }
 
+.table__rematch {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.table__rematch-msg {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-crimson-bright);
+  text-align: center;
+}
+
 .table__start-btn {
   background: linear-gradient(160deg, var(--color-gold-bright) 0%, var(--color-gold) 100%);
   color: var(--color-ink);

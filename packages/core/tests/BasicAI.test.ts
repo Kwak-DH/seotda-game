@@ -3,7 +3,8 @@ import { decideBasicAiAction } from "../src/ai/BasicAI.js";
 import type { SeotdaCard } from "../src/card/Card.js";
 
 function card(month: SeotdaCard["month"], isGwang: boolean): SeotdaCard {
-  return { month, isGwang, id: `${month}-${isGwang ? "g" : "p"}`, label: "" };
+  const variant: SeotdaCard["variant"] = isGwang ? "gwang" : "yeolkkeut";
+  return { month, isGwang, variant, id: `${month}-${isGwang ? "g" : "p"}`, label: "" };
 }
 
 describe("decideBasicAiAction", () => {

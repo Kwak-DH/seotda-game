@@ -53,16 +53,19 @@ export function applyBetAction(
       break;
     }
     case "call": {
-      // 칩이 직전 베팅액보다 적으면 가진 만큼만 베팅하는 "올인"으로 처리
-      const callAmount = Math.min(state.lastBetAmount, player.chips);
-      if (callAmount <= 0) {
+      // 이번 베팅 라운드에서 이미 베팅한 금액(totalBet)을 뺀 "부족분"만 채우면 된다.
+      // (레이즈에 대응해 두 번째로 콜하는 경우, 직전 베팅액 전체를 다시 더하면 안 됨)
+      const amountOwed = Math.max(0, state.lastBetAmount - player.totalBet);
+      if (amountOwed > 0 && player.chips <= 0) {
         return { success: false, error: "베팅할 칩이 없습니다.", state };
       }
+      // 칩이 부족분보다 적으면 가진 만큼만 베팅하는 "올인"으로 처리
+      const callAmount = Math.min(amountOwed, player.chips);
       updatedPlayer = {
         ...player,
         chips: player.chips - callAmount,
         totalBet: player.totalBet + callAmount,
-        isAllIn: callAmount < state.lastBetAmount,
+        isAllIn: callAmount < amountOwed,
         hasActed: true,
       };
       potDelta = callAmount;

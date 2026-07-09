@@ -17,10 +17,12 @@ export interface UseGameEngineResult {
   state: GameState;
   humanId: string;
   aiId: string;
-  /** 새 판을 시작한다 */
+  /** 새 판을 시작한다. phase가 "rematch"였다면 팟을 이월해 재경기를 딜한다. */
   startNewRound: () => void;
   /** 사람 플레이어의 베팅 액션 실행 */
   act: (action: BetAction) => { success: boolean; error?: string };
+  /** 구사 재경기에서 제외된 플레이어가 재참여 배팅을 하고 다시 낀다 */
+  rejoinRematch: (playerId: string) => { success: boolean; error?: string };
   /** 지금 사람 차례인지 여부 */
   isHumanTurn: boolean;
   /** 마지막 액션 에러 메시지 (있으면) */
@@ -69,18 +71,18 @@ export function useGameEngine(): UseGameEngineResult {
     setState(current);
   }, []);
 
+  /**
+   * 기존 엔진 인스턴스를 그대로 이어받아 새 판을 딜한다.
+   * (여기서 새 GameEngine/GameState를 새로 만들면 phase/pot/excludedFromRematch가
+   * 초기화되어 구사 재경기 이월이 깨지므로, 반드시 같은 엔진에서 startNewRound를 호출해야 한다.)
+   */
   const startNewRound = useCallback(() => {
-    const players = [
-      createInitialPlayer(HUMAN_ID, "나", state.players.find((p) => p.id === HUMAN_ID)?.chips ?? STARTING_CHIPS),
-      createInitialPlayer(AI_ID, "상대", state.players.find((p) => p.id === AI_ID)?.chips ?? STARTING_CHIPS),
-    ];
-    const carriedState = createInitialGameState(players, BASE_BET);
-    const engine = new GameEngine({ ...carriedState, roundNumber: state.roundNumber });
-    engineRef.current = engine;
+    const engine = engineRef.current;
+    if (!engine) return;
     const newState = engine.startNewRound();
     setLastError(null);
     setState(newState);
-  }, [state.players, state.roundNumber]);
+  }, []);
 
   const act = useCallback(
     (action: BetAction) => {
@@ -98,6 +100,19 @@ export function useGameEngine(): UseGameEngineResult {
     [runAiTurnIfNeeded]
   );
 
+  const rejoinRematch = useCallback((playerId: string) => {
+    const engine = engineRef.current;
+    if (!engine) return { success: false, error: "엔진이 초기화되지 않았습니다." };
+    const result = engine.rejoinRematch(playerId);
+    if (!result.success) {
+      setLastError(result.error ?? "알 수 없는 오류");
+      return result;
+    }
+    setLastError(null);
+    setState(result.state);
+    return result;
+  }, []);
+
   const isHumanTurn =
     state.phase === "betting" && state.players[state.currentPlayerIndex]?.id === HUMAN_ID;
 
@@ -107,6 +122,7 @@ export function useGameEngine(): UseGameEngineResult {
     aiId: AI_ID,
     startNewRound,
     act,
+    rejoinRematch,
     isHumanTurn,
     lastError,
   };

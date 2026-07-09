@@ -19,6 +19,10 @@ export function dealCards(state: GameState, deck: Deck): GameState {
     lastBetAmount: state.baseBet,
     results: null,
     winners: null,
+    specialWin: null,
+    // 직전 판이 홀수 번의 베팅 액션(예: AI 레이즈 후 콜)으로 끝나면 currentPlayerIndex가
+    // 그대로 남아있을 수 있으므로, 새 판 시작 시 항상 살아있는 첫 플레이어로 되돌린다.
+    currentPlayerIndex: newPlayers.findIndex((p) => !p.isDead),
   };
 }
 

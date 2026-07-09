@@ -4,13 +4,28 @@ import { HandResult } from "../HandResult/HandResult";
 import { useGameEngine } from "../../hooks/useGameEngine";
 import "./Table.css";
 
+const SPECIAL_KIND_LABELS: Record<"amhaengeosa" | "ttangjabi", string> = {
+  amhaengeosa: "암행어사",
+  ttangjabi: "땡잡이",
+};
+
 export function Table() {
-  const { state, humanId, aiId, startNewRound, act, isHumanTurn, lastError } = useGameEngine();
+  const { state, humanId, aiId, startNewRound, act, rejoinRematch, isHumanTurn, lastError } =
+    useGameEngine();
 
   const human = state.players.find((p) => p.id === humanId);
   const ai = state.players.find((p) => p.id === aiId);
   const showResult = state.phase === "showdown" || state.phase === "roundEnd";
   const notStarted = state.phase === "waiting";
+  const isRematch = state.phase === "rematch";
+
+  const specialWinner = state.specialWin
+    ? state.players.find((p) => p.id === state.specialWin!.winnerId)
+    : undefined;
+  const specialNotice =
+    state.specialWin && specialWinner
+      ? `${specialWinner.name}이(가) ${SPECIAL_KIND_LABELS[state.specialWin.kind]}(으)로 승리!`
+      : undefined;
 
   const resultEntries = showResult
     ? state.players.map((p) => ({
@@ -82,6 +97,25 @@ export function Table() {
             게임 시작
           </button>
         </div>
+      ) : isRematch ? (
+        <div className="table__rematch">
+          <p className="table__rematch-msg">
+            구사! 패가 무효 처리되어 재경기합니다. (판돈 {state.pot.toLocaleString()} 이월)
+          </p>
+          {human?.excludedFromRematch ? (
+            <button
+              type="button"
+              className="table__start-btn"
+              onClick={() => rejoinRematch(humanId)}
+            >
+              재참여 (판돈의 {Math.round(state.rebuyRatio * 100)}% 배팅)
+            </button>
+          ) : (
+            <button type="button" className="table__start-btn" onClick={startNewRound}>
+              재경기 시작
+            </button>
+          )}
+        </div>
       ) : (
         <BettingPanel
           disabled={!isHumanTurn || showResult}
@@ -97,6 +131,7 @@ export function Table() {
         <HandResult
           entries={resultEntries}
           potWon={state.winners?.includes(humanId) ? state.pot : 0}
+          specialNotice={specialNotice}
           onNextRound={startNewRound}
         />
       )}

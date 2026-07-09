@@ -171,4 +171,48 @@ describe("GameEngine - 베팅 흐름", () => {
       finalState.players[0]!.chips + finalState.players[1]!.chips;
     expect(totalChipsAfter).toBe(totalChipsBefore);
   });
+
+  it("콜 이후 상대가 레이즈하면, 다시 콜할 때는 부족분만 낸다 (직전 베팅액 전체를 또 내지 않음)", () => {
+    const players = [
+      createInitialPlayer("p1", "P1", 10000),
+      createInitialPlayer("p2", "P2", 10000),
+    ];
+    const initialState = createInitialGameState(players, 100);
+    const engine = new GameEngine(initialState, fixedRng(21));
+    engine.startNewRound(fixedRng(21));
+
+    engine.bet("p1", { type: "call" }); // p1 totalBet: 0 -> 100
+    engine.bet("p2", { type: "raise", amount: 200 }); // p2 totalBet: 0 -> 200
+    engine.bet("p1", { type: "call" }); // p1은 100만 더 내면 됨 (100 -> 200)
+
+    const state = engine.getState();
+    const p1 = state.players.find((p) => p.id === "p1")!;
+    const p2 = state.players.find((p) => p.id === "p2")!;
+    expect(p1.totalBet).toBe(200);
+    expect(p2.totalBet).toBe(200);
+    expect(["showdown", "roundEnd", "rematch"]).toContain(state.phase);
+  });
+
+  it("직전 판이 홀수 번의 베팅 액션(콜-레이즈-콜)으로 끝나도 다음 판은 첫 플레이어부터 시작한다", () => {
+    const players = [
+      createInitialPlayer("p1", "P1", 10000),
+      createInitialPlayer("p2", "P2", 10000),
+    ];
+    const initialState = createInitialGameState(players, 100);
+    const engine = new GameEngine(initialState, fixedRng(13));
+    engine.startNewRound(fixedRng(13));
+
+    // p1 콜(1) -> p2 레이즈(2) -> p1 콜(3): 총 3번의 액션으로 라운드가 종료된다.
+    // 수정 전에는 이 경우 currentPlayerIndex가 p2(index 1)에 남아, 다음 판이
+    // p2 차례로 시작되어 인간 플레이어 UI가 영구히 멈추는 버그가 있었다.
+    engine.bet("p1", { type: "call" });
+    engine.bet("p2", { type: "raise", amount: 200 });
+    const finalActionResult = engine.bet("p1", { type: "call" });
+    expect(finalActionResult.success).toBe(true);
+    expect(["showdown", "roundEnd", "rematch"]).toContain(engine.getState().phase);
+
+    const nextRoundState = engine.startNewRound(fixedRng(17));
+    expect(nextRoundState.phase).toBe("betting");
+    expect(nextRoundState.currentPlayerIndex).toBe(0);
+  });
 });

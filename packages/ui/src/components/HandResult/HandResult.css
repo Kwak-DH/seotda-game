@@ -37,6 +37,14 @@
   letter-spacing: 0.1em;
 }
 
+.hand-result__special {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-crimson-bright);
+  margin: 0 0 16px;
+}
+
 .hand-result__list {
   list-style: none;
   margin: 0 0 20px;

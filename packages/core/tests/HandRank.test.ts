@@ -2,9 +2,14 @@ import { describe, it, expect } from "vitest";
 import { calculateHandRank, compareHandRank } from "../src/rules/HandRank.js";
 import type { SeotdaCard } from "../src/card/Card.js";
 
-/** 테스트용 카드 헬퍼 */
+/**
+ * 테스트용 카드 헬퍼.
+ * HandRank 계산은 month/isGwang만 사용하므로 variant는 임의로 채운다
+ * (isGwang=true면 "gwang", 아니면 "yeolkkeut").
+ */
 function card(month: SeotdaCard["month"], isGwang: boolean): SeotdaCard {
-  return { month, isGwang, id: `${month}-${isGwang ? "g" : "p"}`, label: "" };
+  const variant: SeotdaCard["variant"] = isGwang ? "gwang" : "yeolkkeut";
+  return { month, isGwang, variant, id: `${month}-${isGwang ? "g" : "p"}`, label: "" };
 }
 
 describe("calculateHandRank", () => {
